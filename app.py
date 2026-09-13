@@ -8,7 +8,7 @@ import tkinter as tk
 from tkinter import ttk, scrolledtext, messagebox
 
 from utils import get_creation_time
-from parser import parse_part_a, parse_part_b, parse_part_c
+from parser import *
 from pdf_generator import generate_pdf, REPORTLAB_AVAILABLE
 
 
@@ -202,22 +202,11 @@ class EtsParserApp:
             output_lines.append(f"警告：只找到 {len(matches)} 个子文件夹，期望 3 个")
         matches.sort(key=lambda x: x[0])
 
-        part_parsers = [
-            ('PartA', parse_part_a),
-            ('PartB', parse_part_b),
-            ('PartC', parse_part_c),
-        ]
-        for idx, (part_name, parser_fn) in enumerate(part_parsers):
-            if idx < len(matches):
-                folder = matches[idx][1]
-                output_lines.append(f"\n【{part_name}】 子文件夹：{folder.name}")
-                json_file = folder / "content.json"
-                if not json_file.exists():
-                    output_lines.append(f"错误：未找到 {json_file}")
-                    continue
-                parser_fn(json_file, output_lines)
-            else:
-                output_lines.append(f"\n【{part_name}】 未找到对应的子文件夹")
+        for idx in matches:
+            folder = idx[1]
+            output_lines.append(f"\n子文件夹：{folder.name}")
+            json_file = folder / "content.json"
+            parse_json_file(json_file, output_lines)
 
         complete_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         output_lines.append(f"\n[完成] 解析完成时间：{complete_time}")

@@ -27,10 +27,17 @@ def split_html_paragraphs(html_text: str) -> list:
 
 def format_text_with_paragraphs(text: str) -> str:
     """段落间插入两个换行，提升可读性"""
-    paras = split_html_paragraphs(text)
+    '''paras = split_html_paragraphs(text)
     if not paras:
         return text
-    return "\n\n".join(paras)
+    return "\n\n".join(paras)'''
+
+    text=re.sub(r'</p>', r'', text, flags=re.DOTALL)
+    text=re.sub(r'<p>', r'\n', text, flags=re.DOTALL)
+    text=re.sub(r'</?br\s*/?>', r'\n', text, flags=re.DOTALL)
+    text=re.sub(r'<[^>]+>', r'', text, flags=re.DOTALL)
+    text=re.sub(r'\n+', r'\n', text, flags=re.DOTALL)
+    return text
 
 
 def get_creation_time(path: Path) -> str:
